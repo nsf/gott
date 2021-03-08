@@ -1,0 +1,32 @@
+Usage:
+  ./gott [flags]
+
+Flags:
+  -d value
+    	Define variables, syntax: NAME[:TYPE[:TYPE]]=VALUE
+  -f string
+    	Input file name or - for stdin (default "-")
+  -o string
+    	Output file name or - for stdout (default "-")
+  -v	Print the version
+
+Variable types:
+  bool    - boolean, uses Go's strconv.ParseBool
+  env     - string, read value from environment variable (chainable)
+  file    - string, read value from utf-8 file (chainable)
+  float   - float64, uses Go's strconv.ParseFloat
+  float64 - float64, uses Go's strconv.ParseFloat
+  int     - int64, uses Go's strconv.ParseInt
+  int64   - int64, uses Go's strconv.ParseInt
+  json    - any, uses Go's encoding/json.Unmarshal
+  string  - string
+
+Variable definition examples:
+  -d 'name=John'                         - define "name" string variable with "John" as value
+  -d 'debug:bool=false'                  - define "debug" boolean variable with false as value
+  -d 'config:json:file=/etc/config.json" - read file "/etc/config.json", parse it as json, save the result to "config" variable
+  -d 'IsRelease:bool:env=IS_RELEASE"     - read environment variable "IS_RELEASE", parse it as bool, save the result to "IsRelease" variable
+  -d 'a=1' -d 'b=2'                      - define multiple variables
+
+  It's easiest to read it from right to left: NAME:A:B=VALUE - VALUE is applied to type B, then to type A, then saved as NAME.
+  Variables are available from the top level template context object, e.g. {{ if .IsRelease }}RELEASE{{ else }}DEBUG{{ end }}
