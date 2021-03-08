@@ -1,0 +1,26 @@
+name: Release V1
+on:
+  push:
+    tags:
+      - v*
+jobs:
+  tagged-release:
+    name: "Tagged Release"
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: "1.16.0"
+      - name: Checkout Source Code
+        uses: actions/checkout@v2
+      - name: Build Go binary
+        run: |
+          CGO_ENABLED=0 go build
+          strip -s ./gott
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: gott
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
