@@ -16,11 +16,15 @@ jobs:
         uses: actions/checkout@v2
       - name: Build Go binary
         run: |
-          CGO_ENABLED=0 go build
-          strip -s ./gott
+          VERSION=$(git describe --tags)
+          FILENAME="gott-$VERSION-linux-amd64"
+          CGO_ENABLED=0 go build -ldflags "-X main.version=$VERSION"
+          strip -s gott
+          mv gott $FILENAME
+          echo "FILENAME=$FILENAME" >> $GITHUB_ENV
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
-          files: gott
+          files: ${{ env.FILENAME }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

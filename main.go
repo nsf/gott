@@ -32,6 +32,8 @@ func init() {
 
 var inputFile = flag.String("f", "-", "Input file name or - for stdin")
 var outputFile = flag.String("o", "-", "Output file name or - for stdout")
+var versionFlag = flag.Bool("v", false, "Print the version")
+var version = "v1.x.x"
 
 func fatalf(format string, args ...interface{}) {
 	err := fmt.Errorf(format, args...)
@@ -157,6 +159,11 @@ func main() {
 		fmt.Fprintf(flag.CommandLine.Output(), "  Variables are available from the top level template context object, e.g. {{ if .IsRelease }}RELEASE{{ else }}DEBUG{{ end }}\n")
 	}
 	flag.Parse()
+
+	if *versionFlag {
+		fmt.Fprintf(flag.CommandLine.Output(), "%s\n", version)
+		return
+	}
 
 	// load template file data
 	var data []byte
